@@ -1,0 +1,88 @@
+commonfields:
+  id: df4d2205-5eaf-48f7-8b7c-9eba85121730
+  version: 2
+vcShouldKeepItemLegacyProdMachine: false
+name: checkCreditCard
+script: |-
+  def doubler(digit):
+      "Double digit, add its digits together if they are >= 10"
+      digit = int(digit)
+      digit = digit * 2
+
+      if digit < 0:
+          print("Error!  digit < 0 sent: " + str(digit))
+          sys.exit(1)
+
+      if digit > 18:
+          print("Error!  digit > 18 sent: " + str(digit))
+          sys.exit(1)
+
+      if digit < 10:
+          return digit
+
+      return digit - 9
+
+  def reverse(str):
+      "Reverse the string str"
+      buf = ""
+      a = 0
+      while (a < len(str)):
+          a += 1
+          buf += str[-a]
+      return buf
+
+  def check(cc):
+      "Given a cc number (string), will return True if it passes mod10 check, False otherwise"
+      cc = reverse(cc)
+
+      a = 0
+      total = 0
+      while (a < len(cc)):
+             if (a % 2) == 1:
+                 total = total + doubler(cc[a])
+             else:
+                 total = total + int(cc[a])
+             a += 1
+
+      if (total % 10) == 0:
+          return True
+      else:
+          return False
+
+
+
+
+  def main():
+      try:
+          args = demisto.args()
+          number = args.get('number')
+          if not number:
+              raise ValueError('number was not specified')
+          return_results(check(number))
+      except Exception as ex:
+          demisto.error(traceback.format_exc())  # print the traceback
+          return_error(f'Failed to execute checkCreditCard. Error: {str(ex)}')
+
+
+  ''' ENTRY POINT '''
+
+
+  if __name__ in ('__main__', '__builtin__', 'builtins'):
+      main()
+type: python
+tags: []
+comment: Incorporates a Modulus 10 or Mod10 algorithm (also called a Luhn Algorithm)
+  to check the validity of a credit card. If the checksum is not 0, then the given
+  number is not a valid Credit Card number.
+enabled: true
+args:
+- name: number
+  required: true
+scripttarget: 0
+subtype: python3
+pswd: ""
+runonce: false
+dockerimage: demisto/python3:3.10.8.37233
+runas: DBotWeakRole
+engineinfo: {}
+mainengineinfo: {}

@@ -9,6 +9,7 @@ configuration:
   display: Model Name
   name: model
   options:
+  - text-davinci-003
   - text-davinci-002
   - text-davinci-001
   - text-curie-001
